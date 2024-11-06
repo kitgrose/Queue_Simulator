@@ -64,11 +64,11 @@ $("#simulate").click(function () {
 
             // Now display all those numbers
             clone.find('.count').text(c);
-            clone.find('.modal-label').text(`Data for ${c} servers`);
+            clone.find('.modal-label').text(`Data for ${c} terminal${c != 1 ? 's' : ''}`);
 
             if (rho >= 1) {
                 clone.find('tr').addClass('error');
-                clone.find('.modal-body').text("Customers arrive faster than they may be served, so statistics are unavailable. The line is always growing.");
+                clone.find('.modal-body').text("Customers arrive faster than they may be processed, so statistics are unavailable. The line is always growing.");
             } else {
                 clone.find('.terminal-utilisation').html(Math.round(rho * 100) + "%");
                 clone.find('.queue-length').text((Math.round(lQueue * 100) / 100).toFixed(2));
@@ -78,10 +78,10 @@ $("#simulate").click(function () {
 
                 clone.find('.modal-body').html(`
                     <dl>
-                        <dt>Servers:</dt><dd>${c}</dd>
+                        <dt>Number of terminals:</dt><dd>${c}</dd>
                         <dt>Arrival rate:</dt><dd>${lambda}</dd>
-                        <dt>Service Rate of one server:</dt><dd>${mu}</dd>
-                        <dt>Server utilization:</dt><dd>${rho}</dd>
+                        <dt>Service rate of one terminal:</dt><dd>${mu}</dd>
+                        <dt>Terminal utilisation:</dt><dd>${rho}</dd>
                         <dt>Steady-state probability of zero customers in system:</dt><dd>${pNaught}</dd>
                         <dt>Avg time in system per customer:</dt><dd>${w}</dd>
                         <dt>Avg time in queue per customer:</dt><dd>${wQueue}</dd>
@@ -89,7 +89,7 @@ $("#simulate").click(function () {
                         <dt>Avg number of customers in line:</dt><dd>${lQueue}</dd>
                     </dl>
                 `);
-                clone.find('.checkout-time').text(`${min}:${sec.toString().padStart(2, '0')}`);
+                clone.find('.processing-time').text(`${min}:${sec.toString().padStart(2, '0')}`);
 
                 if (w > goal_service) {
                     clone.find('tr').addClass('warning');
