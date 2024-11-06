@@ -1,4 +1,26 @@
-input[type=text] { width: 100%; box-sizing: border-box; height: 28px; }
+input[type=text] {
+	width: 100%;
+	box-sizing: border-box;
+	height: 28px;
+}
+
 #sidebar {
 	padding-top: 20px;
+}
+
+.table th,
+.table td {
+	text-align: right;
+}
+
+.table .modal {
+	text-align: left;
+}
+
+dl {
+	margin-block-start: 0;
+}
+
+dl:last-child {
+	margin-block-end: 0;
 }
