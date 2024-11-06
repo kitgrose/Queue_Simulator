@@ -13,6 +13,7 @@ $("#simulate").click(function () {
         $('#results-tbody').empty();
 
         // There are inputs
+        const max_terminals = $("#max_terminals").val();
         const service_input = $("#service_input").val();
         const arrival_input = $("#arrival_input").val();
         const goal_service = $("#goal_service").val();
@@ -23,7 +24,7 @@ $("#simulate").click(function () {
         $("#service_display").text(service_input);
         let suggestion = 0;
 
-        for (var c = 1; c <= 8; c++) {
+        for (var c = 1; c <= max_terminals; c++) {
 
             // Utilization
             let rho = lambda / c / mu;
