@@ -1,112 +1,127 @@
-$("#reset").click(function() {
-	$("#output").addClass('hide');
-	$("#service_input").val('');
-	$("#arrival_input").val('');
-	$("#goal_service").val('');
+const rowTemplate = document.querySelector('#result-row-template');
+
+$("#reset").click(function () {
+    $("#output").addClass('hide');
+    $("#service_input").val('');
+    $("#arrival_input").val('');
+    $("#goal_service").val('');
 
 });
 
-$("#simulate").click(function() {
-	if ( ($("#service_input").val() != "" ) && ($("#arrival_input").val() != "") && ($("#goal_service").val()!="")){
-		
-		// There are inputs
-		service_input = $("#service_input").val();
-		arrival_input = $("#arrival_input").val();
-		goal_service = $("#goal_service").val();
-		lambda = ( arrival_input / 60 );
-		mu = 1/service_input;
-		$("#arrival_display").text(arrival_input);
-		$("#service_display").text(service_input);
-		suggestion = 0;
-		for (c=1;c<=8;c++)
-		{ 		
-			// Reset rows
-			$("#row" + c).removeClass('success error warning');
+$("#simulate").click(function () {
+    if (($("#service_input").val() != "") && ($("#arrival_input").val() != "") && ($("#goal_service").val() != "")) {
+        $('#results-tbody').empty();
 
-			// Utilization
-			rho = lambda / c / mu;
+        // There are inputs
+        const service_input = $("#service_input").val();
+        const arrival_input = $("#arrival_input").val();
+        const goal_service = $("#goal_service").val();
+        const lambda = (arrival_input / 60);
+        const mu = 1 / service_input;
 
-			// Customers in queue
-			Pnaught = 0;
-			// summation term
-			for (n=0;n<c;n++) {
-				Pnaught = Pnaught + Math.pow((lambda/mu),n) / factorial(n);
-			}
-			// Add second term
-			Pnaught = Pnaught + Math.pow((lambda/mu),c) * (1/factorial(c)) * (c*mu / (c*mu-lambda));
+        $("#arrival_display").text(arrival_input);
+        $("#service_display").text(service_input);
+        let suggestion = 0;
 
-			// final inverse
-			Pnaught = 1/Pnaught;
+        for (var c = 1; c <= 8; c++) {
 
-			// Probabilility L of infinity is greater than c
-			Plinf = Math.pow(c*rho,c)*Pnaught/(factorial(c)*(1-rho));
-			// Now we calculate L
-			// init
-			L = c * rho;
-			L = L + Math.pow(c*rho, (c+1)) * Pnaught / (c * factorial(c) * Math.pow(1-rho,2));
-			// L complete
+            // Utilization
+            let rho = lambda / c / mu;
 
-			w = L / lambda;
+            // Customers in queue
+            let pNaught = 0;
 
-			wq = w - 1/mu;
-			// number in line
-			Lq = lambda * wq;
+            // Summation term
+            for (n = 0; n < c; n++) {
+                pNaught = pNaught + Math.pow((lambda / mu), n) / factorial(n);
+            }
 
+            // Add second term
+            pNaught = pNaught + Math.pow((lambda / mu), c) * (1 / factorial(c)) * (c * mu / (c * mu - lambda));
 
+            // Final inverse
+            pNaught = 1 / pNaught;
 
-			// Now display all those numbers
-			if ( rho >= 1 ) {
-				$("#row" + c).addClass("error");
-				$("#rho" + c).text('');
-				$("#L" + c).text('');
-				$("#W" + c).text('');
-				$("#dumpbody"+c).html("Customers arrive faster than they may be served, so statistics are unavailable. The line is always growing. ");
+            // Probability L of infinity is greater than c
+            pLInfinity = Math.pow(c * rho, c) * pNaught / (factorial(c) * (1 - rho));
 
-			}
-			else {
-				$("#rho" + c).html(Math.round( rho * 100) + "%");
-				$("#L" + c).text(Math.round( Lq * 100)/100);
-				min = Math.floor( w );
-				sec = Math.floor(w%1*60);
-				if (sec < 10 && sec>0) {
-					// make it pretty
-					sec = "0"+sec;
-				}
-				if (sec == 0) {
-					sec = "00";
-				}
+            // Now we calculate L
+            // Init
+            let l = c * rho;
+            l = l + Math.pow(c * rho, (c + 1)) * pNaught / (c * factorial(c) * Math.pow(1 - rho, 2));
+            l = l + rho * pLInfinity / (1 - rho);
 
-				$("#dumpbody"+c).html("<div>Servers: " + c + "</div><div>Arrival rate: " + lambda + "</div><div>Service Rate of one server:" + mu + "</div><div>Server utilization: " + rho + "</div><div>Steady-state probability of zero customers in system: " + Pnaught + "</div><div>Avg time in system per customer: " + w + " </div><div>Avg average time in queue per customer: " + wq + "</div><div>Avg number of customers in system: " + L + "</div><div>Avg number of customers in line: " + Lq + "</div>");
-				$("#W" + c).text( min+ ":" +sec );
-				if ( w > goal_service ) {
-					$("#row" + c).addClass('warning');
-				}
-				else {
-					$("#row" + c).addClass('success');	
-					if (suggestion == 0) {
-						suggestion = c;
-					}				
-				}
-			}
-			
+            let w = l / lambda;
 
-		}
-		// Now we print the suggestion
-			if (suggestion == 0 ) {
-				$("#rec_outer").addClass('hidden');
+            let wQueue = w - 1 / mu;
 
-			}else {
-				$("#rec_outer").removeClass('hidden');
-				$("#recommendation").text(suggestion);
+            // number in line
+            let lQueue = lambda * wQueue;
 
-			}
+            // Create a new row
+            const clone = $(rowTemplate.content.cloneNode(true));
 
-		$("#output").removeClass('hide');
-	}
+            // Now display all those numbers
+            clone.find('.count').text(c);
+            clone.find('.modal-label').text(`Data for ${c} servers`);
+
+            if (rho >= 1) {
+                clone.find('tr').addClass('error');
+                clone.find('.modal-body').text("Customers arrive faster than they may be served, so statistics are unavailable. The line is always growing.");
+            } else {
+                clone.find('.terminal-utilisation').html(Math.round(rho * 100) + "%");
+                clone.find('.queue-length').text((Math.round(lQueue * 100) / 100).toFixed(2));
+
+                min = Math.floor(w);
+                sec = Math.floor(w % 1 * 60);
+
+                clone.find('.modal-body').html(`
+                    <dl>
+                        <dt>Servers:</dt><dd>${c}</dd>
+                        <dt>Arrival rate:</dt><dd>${lambda}</dd>
+                        <dt>Service Rate of one server:</dt><dd>${mu}</dd>
+                        <dt>Server utilization:</dt><dd>${rho}</dd>
+                        <dt>Steady-state probability of zero customers in system:</dt><dd>${pNaught}</dd>
+                        <dt>Avg time in system per customer:</dt><dd>${w}</dd>
+                        <dt>Avg time in queue per customer:</dt><dd>${wQueue}</dd>
+                        <dt>Avg number of customers in system:</dt><dd>${l}</dd>
+                        <dt>Avg number of customers in line:</dt><dd>${lQueue}</dd>
+                    </dl>
+                `);
+                clone.find('.checkout-time').text(`${min}:${sec.toString().padStart(2, '0')}`);
+
+                if (w > goal_service) {
+                    clone.find('tr').addClass('warning');
+                }
+                else {
+                    clone.find('tr').addClass('success');
+                    if (suggestion == 0) {
+                        suggestion = c;
+                    }
+                }
+            }
+
+            // Attach the data modal trigger
+            clone.find('.data-modal').attr('id', `data-modal-${c}`);
+            clone.find('.data-modal-trigger').attr('href', `#data-modal-${c}`);
+
+            $('#results-tbody').append(clone);
+        }
+
+        // Now we print the suggestion
+        if (suggestion == 0) {
+            $("#rec_outer").addClass('hidden');
+
+        } else {
+            $("#rec_outer").removeClass('hidden');
+            $("#recommendation").text(suggestion);
+        }
+
+        $("#output").removeClass('hide');
+    }
 });
 
-function factorial(n)
-{
-	if (n <= 1) return 1;
-	return n*factorial(n-1);
+function factorial(n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
 }

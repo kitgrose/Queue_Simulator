@@ -1,6 +1,3 @@
----
-layout: nil
----
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -11,14 +8,9 @@ layout: nil
 		<meta name="author" content="Philip I. Thomas">
 
 		<!-- Le styles -->
-		<link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
-		<link href="/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="/custom/custom.css" rel="stylesheet">
-
-		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-		<!--[if lt IE 9]>
-			<script src="../assets/js/html5shiv.js"></script>
-		<![endif]-->
+		<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+		<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="custom/custom.css" rel="stylesheet">
 
 		<!-- Fav and touch icons -->
 		<link rel="shortcut icon" href="favicon.ico">
@@ -30,13 +22,13 @@ layout: nil
 				<div class="span3">
 					<div id="sidebar">
 						<div class="well">
-							<em>How many cashiers do you need?</em>
+							<em>How many terminals do you need?</em>
 							<h3>Queue Simulator</h3>
 
 							<!-- Form -->
 							<div>Average Customers per Hour:</div>
 							<input type="text" id="arrival_input" value="60" />
-							<div>Average Cashier Service Time (Minutes):</div>
+							<div>Average Terminal Service Time (Minutes):</div>
 							<input type="text" id="service_input" value="3.5" />
 							<div>Goal Customer Checkout Time (Minutes):</div>
 							<input type="text" id="goal_service" value="5" />
@@ -49,18 +41,18 @@ layout: nil
 									<h3 id="myModalLabel">About</h3>
 								</div>
 								<div class="modal-body">
-									<p>This program allows informed scheduling decisions about how many cashiers/servers to staff based on anticipated customer load.
-									Based on input of number of customers expected in an hour and on how long, on average, it takes a cashier to
-									check out a customer, and the maximum time you want a customer to spend from when they enter the line to when they have finished at the register, the application recommends how many cashiers to staff.  </p>
-									<p>This data is applicable to situations where all customers form a single line for multiple registers/servers. Queues are simulated as <a href="http://en.wikipedia.org/wiki/M/M/c_queue">M/M/c queues</a>, meaning that the model assumes that customer arrivals are a Poisson process, and that service times are exponentially distributed. It also assumes that customers are served in the order they arrive.</p>
+									<p>This program allows informed scheduling decisions about how many terminals to provision based on anticipated customer load.
+									Based on input of number of customers expected in an hour and on how long, on average, it takes a terminal to
+									check out a customer, and the maximum time you want a customer to spend from when they enter the line to when they have finished at a terminal, the application recommends how many terminals to provision.  </p>
+									<p>This data is applicable to situations where all customers form a single line for multiple terminals. Queues are simulated as <a href="http://en.wikipedia.org/wiki/M/M/c_queue">M/M/c queues</a>, meaning that the model assumes that customer arrivals are a Poisson process, and that service times are exponentially distributed. It also assumes that customers are served in the order they arrive.</p>
 									<p>Terms:</p>
 									<ul>
 										<li>Average customers per hour: How many people are anticipated to make a purchase during the hour.</li>
-										<li>Average Cashier Service Time: How long it takes a cashier to check somebody out.</li>
+										<li>Average Terminal Service Time: How long it takes a terminal to process a customer.</li>
 										<li>Goal Customer Order Time: The goal time it takes for a customer to finish checking out after they enter the line. </li>
-										<li>Average Queue Length: The average number of customers in line, excluding those at the register.</li>
-										<li>Average Checkout Time: How long, on average, it takes a customer from entering line to leaving the register.</li>
-										<li>Cashier Utilization: Percentage of the time a cashier is working.</li>
+										<li>Average Queue Length: The average number of customers in line, excluding those at a terminal.</li>
+										<li>Average Checkout Time: How long, on average, it takes a customer from entering line to leaving the terminal.</li>
+										<li>Terminal Utilization: Percentage of the time a terminal is working.</li>
 									</ul>
 
 									<a class="btn btn-block btn-inverse" href="https://github.com/philipithomas/Queue_Simulator">Fork on Github</a>
@@ -75,38 +67,43 @@ layout: nil
 
 				<div class="span9">
 					<div id="output" class="hide">
-						<div class=""><h2>Results<span id="rec_outer" class="hidden">: <span id="recommendation"></span> Cashiers Recommended</span></h2><small><span id="arrival_display"></span> customers per hour with <span id="service_display"></span> minute service</small></div>
+						<div class=""><h2>Results<span id="rec_outer" class="hidden">: <span id="recommendation"></span> Terminals Recommended</span></h2><small><span id="arrival_display"></span> customers per hour with <span id="service_display"></span> minute service</small></div>
 
 						<table class="table table-bordered table-hover">
 							<thead>
 								<tr>
-								<th>Number of Cashiers</th>
+								<th>Number of Terminals</th>
 								<th>Average Queue Length</th>
 								<th>Average Checkout Time <small>(minutes)</small></th>
-								<th>Cashier Utilization</th>
+								<th>Terminal Utilization</th>
 								<th></th>
 								</tr>
 							</thead>
-							<tbody>
-							{% for i in (1..8) %}
-								<tr id="row{{i}}"><td>{{i}}</td><td><div id="L{{i}}"></div></td><td><div id="W{{i}}"></div></td><td><div id="rho{{i}}"></div></td><td><a href="#dump{{i}}" role="button" class="btn btn-primary" data-toggle="modal">Data</a>
-									<div id="dump{{i}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-										<h3 id="myModalLabel">Data for {{i}} Servers</h3>
-									</div>
-									<div class="modal-body" id="dumpbody{{i}}">
-										<div id="dumpbody{{i}}"></div>
-
-									</div>
-									<div class="modal-footer">
-										<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-									</div>
-									</div></td>
-								</tr>
-							{% endfor %}
+							<tbody id="results-tbody">
 							</tbody>
 						</table>
+
+						<template id="result-row-template">
+							<tr>
+								<td class="count"></td>
+								<td class="queue-length"></td>
+								<td class="checkout-time"></td>
+								<td class="terminal-utilisation"></td>
+								<td><a href="#" role="button" class="btn btn-primary data-modal-trigger" data-toggle="modal">Data</a>
+									<div class="data-modal modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal"
+												aria-hidden="true">×</button>
+											<h3 class="modal-label">Data</h3>
+										</div>
+										<div class="modal-body"></div>
+										<div class="modal-footer">
+											<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</template>
 					</div>
 				</div>
 			</div>
@@ -115,9 +112,9 @@ layout: nil
 		<!-- Le javascript
 		================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-		<script src="/bootstrap/js/bootstrap.js"></script>
-		<script src="/custom/queue.js"></script>
+		<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+		<script src="bootstrap/js/bootstrap.js"></script>
+		<script src="custom/queue.js"></script>
 
 	</body>
 </html>
