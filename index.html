@@ -1,122 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Queue Simulator</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="A tool for understanding customer ">
-		<meta name="author" content="Philip I. Thomas">
 
-		<!-- Le styles -->
-		<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-		<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="custom/custom.css" rel="stylesheet">
+<head>
+	<meta charset="utf-8">
+	<title>Queue Simulator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="A tool for understanding customer ">
+	<meta name="author" content="Philip I. Thomas">
 
-		<!-- Fav and touch icons -->
-		<link rel="shortcut icon" href="favicon.ico">
-	</head>
+	<!-- Le styles -->
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="custom/custom.css" rel="stylesheet">
 
-	<body>
-		<div class="container">
-			<div class="row">
-				<div class="span3">
-					<div id="sidebar">
-						<div class="well">
-							<em>How many terminals do you need?</em>
-							<h3>Queue Simulator</h3>
+	<!-- Fav and touch icons -->
+	<link rel="shortcut icon" href="favicon.ico">
+</head>
 
-							<!-- Form -->
-							<div>Max Terminals:</div>
-							<input type="text" id="max_terminals" value="10" />
-							<div>Average Customers per Hour:</div>
-							<input type="text" id="arrival_input" value="60" />
-							<div>Average Terminal Service Time (Minutes):</div>
-							<input type="text" id="service_input" value="3.5" />
-							<div>Goal Customer Checkout Time (Minutes):</div>
-							<input type="text" id="goal_service" value="5" />
-							<div class="btn btn-block btn-primary" id="simulate">Simulate</div>
-							<div href="#myModal" role="button" class="btn btn-block btn-info" data-toggle="modal" >About</div>
-							<div class="btn btn-block" id="reset">Reset</div>
-							<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-									<h3 id="myModalLabel">About</h3>
-								</div>
-								<div class="modal-body">
-									<p>This program allows informed scheduling decisions about how many terminals to provision based on anticipated customer load.
-									Based on input of number of customers expected in an hour and on how long, on average, it takes a terminal to
-									check out a customer, and the maximum time you want a customer to spend from when they enter the line to when they have finished at a terminal, the application recommends how many terminals to provision.  </p>
-									<p>This data is applicable to situations where all customers form a single line for multiple terminals. Queues are simulated as <a href="http://en.wikipedia.org/wiki/M/M/c_queue">M/M/c queues</a>, meaning that the model assumes that customer arrivals are a Poisson process, and that service times are exponentially distributed. It also assumes that customers are served in the order they arrive.</p>
-									<p>Terms:</p>
-									<ul>
-										<li>Average customers per hour: How many people are anticipated to make a purchase during the hour.</li>
-										<li>Average Terminal Service Time: How long it takes a terminal to process a customer.</li>
-										<li>Goal Customer Order Time: The goal time it takes for a customer to finish checking out after they enter the line. </li>
-										<li>Average Queue Length: The average number of customers in line, excluding those at a terminal.</li>
-										<li>Average Checkout Time: How long, on average, it takes a customer from entering line to leaving the terminal.</li>
-										<li>Terminal Utilization: Percentage of the time a terminal is working.</li>
-									</ul>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="sidebar">
+					<div class="well">
+						<em>How many terminals do you need?</em>
+						<h3>Queue Simulator</h3>
 
-									<a class="btn btn-block btn-inverse" href="https://github.com/philipithomas/Queue_Simulator">Fork on Github</a>
-								</div>
-								<div class="modal-footer">
-									<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-								</div>
-							</div> <!-- end modal -->
-						</div><!-- pad nav-->
+						<!-- Form -->
+						<div>Max Terminals:</div>
+						<input type="text" id="max_terminals" value="10" />
+						<div>Average Customers per Hour:</div>
+						<input type="text" id="arrival_input" value="60" />
+						<div>Average Terminal Service Time (Minutes):</div>
+						<input type="text" id="service_input" value="3.5" />
+						<div>Goal Customer Checkout Time (Minutes):</div>
+						<input type="text" id="goal_service" value="5" />
+						<div class="btn btn-block btn-primary" id="simulate">Simulate</div>
+						<div href="#myModal" role="button" class="btn btn-block btn-info" data-toggle="modal">About
+						</div>
+						<div class="btn btn-block" id="reset">Reset</div>
+						<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog"
+							aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h3 id="myModalLabel">About</h3>
+							</div>
+							<div class="modal-body">
+								<p>This program allows informed scheduling decisions about how many terminals to
+									provision based on anticipated customer load.
+									Based on input of number of customers expected in an hour and on how long, on
+									average, it takes a terminal to
+									check out a customer, and the maximum time you want a customer to spend from when
+									they enter the line to when they have finished at a terminal, the application
+									recommends how many terminals to provision. </p>
+								<p>This data is applicable to situations where all customers form a single line for
+									multiple terminals. Queues are simulated as <a
+										href="http://en.wikipedia.org/wiki/M/M/c_queue">M/M/c queues</a>, meaning that
+									the model assumes that customer arrivals are a Poisson process, and that service
+									times are exponentially distributed. It also assumes that customers are served in
+									the order they arrive.</p>
+								<p>Terms:</p>
+								<dl>
+									<dt>Average customers per hour</dt>
+									<dd>How many people are anticipated to make a purchase during the hour.</dd>
+									<dt>Average Terminal Service Time</dt>
+									<dd>How long it takes a terminal to check somebody out.</dd>
+									<dt>Goal Customer Order Time</dt>
+									<dd>The goal time it takes for a customer to finish checking out after they enter
+										the line.</dd>
+									<dt>Average Queue Length</dt>
+									<dd>The average number of customers in line, excluding those at the register.</dd>
+									<dt>Average Checkout Time</dt>
+									<dd>How long, on average, it takes a customer from entering line to leaving the
+										register.</dd>
+									<dt>Terminal Utilization</dt>
+									<dd>Percentage of the time a terminal is busy.</dd>
+								</dl>
+
+								<a class="btn btn-block btn-inverse"
+									href="https://github.com/philipithomas/Queue_Simulator">View original GitHub
+									repo</a>
+							</div>
+							<div class="modal-footer">
+								<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+							</div>
+						</div> <!-- end modal -->
+					</div><!-- pad nav-->
+				</div>
+			</div> <!-- end span3 -->
+
+			<div class="span9">
+				<div id="output" class="hide">
+					<div class="">
+						<h2>Results<span id="rec_outer" class="hidden">: <span id="recommendation"></span> Terminals
+								Recommended</span></h2><small><span id="arrival_display"></span> customers per hour with
+							<span id="service_display"></span> minute service</small>
 					</div>
-				</div> <!-- end span3 -->
 
-				<div class="span9">
-					<div id="output" class="hide">
-						<div class=""><h2>Results<span id="rec_outer" class="hidden">: <span id="recommendation"></span> Terminals Recommended</span></h2><small><span id="arrival_display"></span> customers per hour with <span id="service_display"></span> minute service</small></div>
-
-						<table class="table table-bordered table-hover">
-							<thead>
-								<tr>
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
 								<th>Number of Terminals</th>
 								<th>Average Queue Length</th>
 								<th>Average Checkout Time <small>(minutes)</small></th>
 								<th>Terminal Utilization</th>
 								<th></th>
-								</tr>
-							</thead>
-							<tbody id="results-tbody">
-							</tbody>
-						</table>
-
-						<template id="result-row-template">
-							<tr>
-								<td class="count"></td>
-								<td class="queue-length"></td>
-								<td class="checkout-time"></td>
-								<td class="terminal-utilisation"></td>
-								<td><a href="#" role="button" class="btn btn-primary data-modal-trigger" data-toggle="modal">Data</a>
-									<div class="data-modal modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal"
-												aria-hidden="true">×</button>
-											<h3 class="modal-label">Data</h3>
-										</div>
-										<div class="modal-body"></div>
-										<div class="modal-footer">
-											<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-										</div>
-									</div>
-								</td>
 							</tr>
-						</template>
-					</div>
+						</thead>
+						<tbody id="results-tbody">
+						</tbody>
+					</table>
+
+					<template id="result-row-template">
+						<tr>
+							<td class="count"></td>
+							<td class="queue-length"></td>
+							<td class="checkout-time"></td>
+							<td class="terminal-utilisation"></td>
+							<td><a href="#" role="button" class="btn btn-primary data-modal-trigger"
+									data-toggle="modal">Data</a>
+								<div class="data-modal modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal"
+											aria-hidden="true">×</button>
+										<h3 class="modal-label">Data</h3>
+									</div>
+									<div class="modal-body"></div>
+									<div class="modal-footer">
+										<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</template>
 				</div>
 			</div>
-		</div> <!-- /container -->
+		</div>
+	</div> <!-- /container -->
 
-		<!-- Le javascript
+	<!-- Le javascript
 		================================================== -->
-		<!-- Placed at the end of the document so the pages load faster -->
-		<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-		<script src="bootstrap/js/bootstrap.js"></script>
-		<script src="custom/queue.js"></script>
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+		integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+	<script src="bootstrap/js/bootstrap.js"></script>
+	<script src="custom/queue.js"></script>
 
-	</body>
+</body>
+
 </html>
