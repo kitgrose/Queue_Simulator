@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>Animated Events Queue Simulator</title>
+<link rel="stylesheet" href="css/animated-queue-simulator.css">
+</head>
+<body>
+<h1>Animated Events Queue Simulator</h1>
+<aside>
+    <label for="numAttendees">Number of Attendees:</label>
+    <input type="number" id="numAttendees" value="500" />
+
+    <label for="numKiosks">Number of Kiosks:</label>
+    <input type="number" id="numKiosks" value="5" min="1" step="1" oninput="updateKioskCount()" />
+
+    <div class="curve-editor">
+        <p class="label">Arrival Pattern:</p>
+        <svg id="curveSvg" class="curve-svg" width="440" height="240" viewBox="-20 -20 440 240">
+            <defs>
+                <pattern id="grid" width="50" height="200" x="0" y="0" patternUnits="userSpaceOnUse">
+                    <line x1="50" y1="0" x2="50" y2="200" stroke="#e0e0e0" stroke-width="1" />
+                </pattern>
+            </defs>
+            <rect class="chart-background" x="0" y="0" width="400" height="200" fill="url(#grid)" stroke="#ddd" stroke-width="1" />
+            <!-- Curve elements will be added programmatically -->
+        </svg>
+
+        <div class="preset-buttons">
+            <button onclick="setPreset('default')">Default</button>
+            <button onclick="setPreset('bell')">Bell Curve</button>
+            <button onclick="setPreset('flat')">Flat/Uniform</button>
+            <button onclick="setPreset('double')">Double Peak</button>
+        </div>
+
+        <details class="curve-control-points">
+            <summary>Control Points</summary>
+            <div class="curve-controls">
+                <div class="control-point">
+                    <label>Start Point</label>
+                    <input type="number" id="p0x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p0y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>Start Control</label>
+                    <input type="number" id="p1x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p1y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>Peak Control 1</label>
+                    <input type="number" id="p2x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p2y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>Peak Point</label>
+                    <input type="number" id="p3x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p3y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>Peak Control 2</label>
+                    <input type="number" id="p4x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p4y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>End Control</label>
+                    <input type="number" id="p5x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p5y" value="0" step="0.01" min="0" max="1">
+                </div>
+                <div class="control-point">
+                    <label>End Point</label>
+                    <input type="number" id="p6x" value="0" step="0.01" min="0" max="1">
+                    <input type="number" id="p6y" value="0" step="0.01" min="0" max="1">
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <label for="secondsAtKiosk">Processing Time at Kiosk:</label>
+    <div class="input-with-suffix">
+        <input type="number" id="secondsAtKiosk" value="15" step="1" />
+        <span>seconds</span>
+    </div>
+
+    <label for="simulationSpeed">Simulation Speed:</label>
+    <div class="input-with-suffix">
+        <input type="range" id="simulationSpeed" min="1" max="60" value="15" onchange="updateSimulationSpeed()" />
+        <output id="simulationSpeedOutput">15</output>
+    </div>
+
+    <div>
+        <button class="simulation-control" id="start" onclick="initialiseSimulation()">Start Simulation</button>
+        <button class="simulation-control" id="playpause" onclick="toggleSimulation()">Toggle Simulation</button>
+    </div>
+</aside>
+<main>
+    <h2>Kiosks</h2>
+    <ul class="kiosks">
+        <li class="kiosk"><ol class="queue"></ol></li>
+        <li class="kiosk"><ol class="queue"></ol></li>
+        <li class="kiosk"><ol class="queue"></ol></li>
+        <li class="kiosk"><ol class="queue"></ol></li>
+        <li class="kiosk"><ol class="queue"></ol></li>
+    </ul>
+
+    <h2>Checked In (<output class="completed-count">0</output>)</h2>
+    <ul class="completed">
+    </ul>
+</main>
+
+<script src="js/curve-editor.js"></script>
+<script src="js/queue-simulation.js"></script>
+<script src="js/animated-queue-simulator.js"></script>
+</body>
+</html>
