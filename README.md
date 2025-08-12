@@ -7,6 +7,9 @@ remove the need for any server-side rendering using Jekyll or similar.
 You can run [this fork][2], or [Philip's original simulator][3] online, or you
 can run this fork by cloning the repo and opening `index.html` in a web browser.
 
+You can also run a separate [animated simulation][6], which is not based on
+Philip's work.
+
 # Philip's Original Explanation
 
 This program was written for the Analysis and Simulation of Discrete Event
@@ -20,3 +23,4 @@ The script analytically solves an [M/M/c][5] queue client-side using Javascript.
   [3]: http://queue.philipithomas.com
   [4]: https://washu.edu
   [5]: https://en.wikipedia.org/wiki/M/M/c_queue
+  [6]: https://kitgrose.github.io/Queue_Simulator/animated.html
